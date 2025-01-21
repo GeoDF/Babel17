@@ -5,7 +5,7 @@ With plural rules for more than forty languages. And extensible.
 
 Usage: 
 
-1) Create a Babel17 object :
+1) **Create a Babel17 object** :
 ```
 bab = new Babel17({
   translations: {
@@ -36,7 +36,7 @@ bab = new Babel17({
 **#count** is the reserved keyword for the number used to find the right plural form.
 
 
-2) Get translations with correct plural forms:
+2) **Get translations with correct plural forms** :
 ```
 translation = bab.t(['phrase_test', {count: 2, name: 'Jack'}])
 ```
@@ -54,7 +54,7 @@ bab.locale = 'fr'
 ```
 
 
- 3) Options:
+**Options**:
 You can define the Bebel 17 object's options at the creation of the object, or after.
 Options are :
 - translations : the translations
