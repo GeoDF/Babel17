@@ -1,6 +1,8 @@
 # Babel17
 Babel 17 is a small internationalization library in Javascript.
 
+With plural rules for more than forty languages. And extensible.
+
 Usage: 
 
 1) Create a Babel17 object :
@@ -29,8 +31,10 @@ bab = new Babel17({
   }
 });
 ```
-"#name" is a variable, replaced by its value in the translation, and
-"#count" is the reserved keyword for the number used to find the right plural form. It can be displayed in the translation, or not. The sample of trnaslations above shows the both cases.
+**#name** is a variable, replaced by its value in the translation, and
+
+**#count** is the reserved keyword for the number used to find the right plural form.
+
 
 2) Get translations with correct plural forms:
 ```
@@ -48,6 +52,7 @@ You can also set it by :
 ```
 bab.locale = 'fr'
 ```
+
 
  3) Options:
 You can define the Bebel 17 object's options at the creation of the object, or after.
