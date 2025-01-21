@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="lib/babel17.js"></script>
+<title>Tests babel17</title>
+</head>
+<body>
+
+<script>
+	bab = new Babel17({
+		translations: {
+			fr: {
+				help: 'Aide',
+				phrase_test: {one: '#name a #count idée.', other: '#name a #count idées.'},
+				translations: 'Traductions',
+			},
+			en: {
+				help: 'Help',
+				phrase_test: {one: '#name has #count idea.', other: '#name has #count ideas.'},
+				translations: 'Translations',
+			},
+			ar: {
+				help: 'مساعدة',
+				phrase_test: {
+					zero:'.لديه #count أفكار #name',
+					one: '.لديه فكرة واحدة #name',
+					two: '.لدى #name فكرتان',
+					few: '.لديه #count أفكار #name',
+					many: '.لديه #count فكرة #name',
+					other: '.لديه #count فكرة #name',
+				},
+			}
+		}
+	});
+
+	// phrases tests
+	ptest = [
+		'help',
+		['phrase_test', {count: 0, name: 'Jim'}],
+		['phrase_test', {count: 1, name: 'Joe'}],
+		['phrase_test', {count: 2, name: 'Jack'}],
+		['phrase_test', {count: 11, name: 'John'}],
+		['phrase_test', {count: 100, name: 'Jane'}],
+	];
+		
+	try {
+		let getLangName = function(lang, loc) {
+			try  {
+				return new Intl.DisplayNames([loc], {type: 'language'}).of(lang) + ' (' + lang + ')';
+			} catch(e) {	
+				return lang;
+			}
+		}
+		let traductions = document.createElement('fieldset');
+		let legend = document.createElement('legend');
+		legend.textContent = bab.t('translations');
+		traductions.append(legend);
+		traductions.style = 'width: 800px;padding:10px;border: thin solid #000';
+		ptest.forEach(function(phrase){
+			let firstTime = true;
+			Object.keys(bab.translations).forEach(function(lang){
+				let tr = document.createElement('div');
+				let b = document.createElement('b');
+				loc = bab.locale;
+				bab.locale = lang;
+				if (firstTime) {
+					tr.append(JSON.stringify(phrase));
+					tr.append(document.createElement('br'));
+					firstTime = false;
+				}
+				tr.append(document.createTextNode('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'));
+				tr.append(' en ' + getLangName(lang, loc));
+				tr.append(': ');
+				let i = document.createElement('i');
+				if (typeof phrase == 'object') {
+					b.textContent =  bab.t(phrase[0], phrase[1]);
+					if (phrase[1][bab.countKeyword] !== undefined) {
+						i.textContent = ' (' + bab.plural(phrase[1][bab.countKeyword], lang) + ')';
+					}
+				} else {
+					b.textContent =  bab.t(phrase);
+				}
+				bab.locale = loc;
+				tr.append(b);
+				tr.append(i);
+				traductions.append(tr);
+			});
+			traductions.append(document.createElement('br'));
+		});
+		document.getElementsByTagName('body')[0].append(traductions);
+		document.getElementsByTagName('body')[0].append(document.createElement('br'));
+
+		let pluralRules = document.createElement('fieldset');
+		pluralRules.style = 'padding:10px;border: thin solid #000';
+		let legend2 = document.createElement('legend');
+		legend2.textContent = 'Plurals rules';
+		pluralRules.append(legend2);
+		let langs = bab.pluralRules.rulesOf;
+		let rules = {};
+		for (lang in langs) {
+			const rule = langs[lang];
+			if (!rules[rule]) 
+				rules[rule] = [lang];
+			else
+				rules[rule].push(lang);
+		}
+		for (const rule in rules) {
+			const pr = document.createElement('div');
+			const b = document.createElement('b');
+			b.textContent = rule;
+			pr.append(b);
+			pr.append(': ');
+			for (lang in rules[rule]) {
+				const a = document.createElement('a');
+				a.title = getLangName(rules[rule][lang], bab.locale);
+				a.append(rules[rule][lang] + ' ');
+				pr.append(a);
+			}
+			let plurals = {};
+			for (let n= 0; n <= 100; n++) {
+				const pkey = bab.plural(n, rules[rule][0]);
+				if (!plurals[pkey]) {
+					plurals[pkey] = [n];
+				}
+				else {
+					plurals[pkey].push(n);
+				}
+			}
+			let pl = document.createElement('div');
+			for (plural in plurals) {
+				pl.append(plural + ' ' + plurals[plural].join(' '));
+				pl.append(document.createElement('br'));
+			}
+			pr.append(pl);
+			pluralRules.append(pr);
+			pluralRules.append(document.createElement('br'));
+		}
+		document.getElementsByTagName('body')[0].append(pluralRules);
+	}	catch(e) {
+		console.error('Babel17 tests failed:  ' + e);
+	}
+</script>
+</body>
+</html>
